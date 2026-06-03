@@ -56,9 +56,9 @@ export function HomePage() {
   return (
     <>
       <section className="space-y-5">
-        <header className="space-y-2 text-center">
+        <header className="space-y-2 text-left">
           <p className="text-sm font-medium text-stone-500">저축할수록 통통해지는 가계부</p>
-          <h1 className="text-3xl font-bold tracking-tight">모아몽</h1>
+          <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">모아몽</h1>
         </header>
 
         <article className="rounded-[28px] bg-white/85 p-5 shadow-card backdrop-blur">

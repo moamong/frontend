@@ -64,7 +64,7 @@ export function StatisticsPage() {
     <section className="space-y-5">
       <header className="space-y-2">
         <p className="text-sm font-medium text-stone-600">기록 흐름을 한눈에 보기</p>
-        <h1 className="text-3xl font-bold tracking-tight">통계</h1>
+        <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">통계</h1>
       </header>
 
       <div className="grid grid-cols-4 gap-2">
