@@ -1,9 +1,7 @@
 export function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
+  return `${new Intl.NumberFormat("ko-KR", {
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount)}원`;
 }
 
 export function formatNumberWithCommas(value: number | string) {
