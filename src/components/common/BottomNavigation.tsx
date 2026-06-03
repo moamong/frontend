@@ -1,10 +1,11 @@
 import type { LucideIcon } from "lucide-react";
-import { ChartColumn, House, Settings } from "lucide-react";
+import { ChartColumn, House, ReceiptText, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
 
 const navItems = [
   { to: ROUTES.dashboard, label: "홈", icon: House },
+  { to: ROUTES.records, label: "기록", icon: ReceiptText },
   { to: ROUTES.statistics, label: "통계", icon: ChartColumn },
   { to: ROUTES.settings, label: "설정", icon: Settings },
 ];
@@ -12,7 +13,7 @@ const navItems = [
 export function BottomNavigation() {
   return (
     <nav className="absolute bottom-0 left-0 right-0 z-20 border-t border-stone-200/80 bg-white/90 backdrop-blur-xl">
-      <div className="mx-auto grid max-w-[430px] grid-cols-3 px-5 py-3">
+      <div className="mx-auto grid max-w-[430px] grid-cols-4 px-5 py-3">
         {navItems.map((item) => (
           <NavLink
             key={item.to}

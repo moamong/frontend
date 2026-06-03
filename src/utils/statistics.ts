@@ -51,6 +51,15 @@ export function getStatisticsSummary(
   };
 }
 
+export function getRecordsForPeriod(
+  records: MoneyRecord[],
+  period: StatisticsPeriod,
+  now = new Date(),
+) {
+  const range = getCurrentRange(period, now);
+  return filterRecordsByRange(records, range);
+}
+
 export function getTrendData(
   records: MoneyRecord[],
   period: StatisticsPeriod,
