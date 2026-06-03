@@ -13,7 +13,7 @@ const navItems = [
 export function BottomNavigation() {
   return (
     <nav
-      className="absolute bottom-0 left-0 right-0 z-20 border-t border-stone-200/80 bg-white/90 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-20 border-t border-stone-200/80 bg-white/90 backdrop-blur-xl lg:absolute"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="mx-auto grid max-w-[430px] grid-cols-4 px-5 py-3">

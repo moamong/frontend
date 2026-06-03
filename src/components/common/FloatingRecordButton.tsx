@@ -12,7 +12,7 @@ export function FloatingRecordButton() {
         type="button"
         aria-label="기록 추가"
         onClick={() => setIsOpen(true)}
-        className="absolute right-5 z-30 flex h-16 w-16 items-center justify-center rounded-full bg-ink text-3xl text-white shadow-card transition hover:scale-105"
+        className="fixed right-5 z-30 flex h-16 w-16 items-center justify-center rounded-full bg-ink text-3xl text-white shadow-card transition hover:scale-105 lg:absolute"
         style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)" }}
       >
         <Plus size={30} strokeWidth={2.5} aria-hidden="true" />
