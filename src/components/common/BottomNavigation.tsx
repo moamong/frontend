@@ -11,7 +11,7 @@ const navItems = [
 
 export function BottomNavigation() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-white/70 bg-white/85 backdrop-blur">
+    <nav className="absolute bottom-0 left-0 right-0 z-20 border-t border-stone-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto grid max-w-[430px] grid-cols-3 px-5 py-3">
         {navItems.map((item) => (
           <NavLink
@@ -20,7 +20,9 @@ export function BottomNavigation() {
             className={({ isActive }) =>
               [
                 "flex flex-col items-center gap-1 rounded-2xl px-3 py-2 text-xs font-semibold transition",
-                isActive ? "bg-coral text-white shadow-card" : "text-stone-500",
+                isActive
+                  ? "bg-coral text-white shadow-card"
+                  : "text-stone-500 hover:bg-stone-100/80",
               ].join(" ")
             }
           >
