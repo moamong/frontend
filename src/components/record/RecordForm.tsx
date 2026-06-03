@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { defaultExpenseCategories, defaultIncomeCategories } from "../../constants/categories";
 import { useRecordStore } from "../../stores/recordStore";
-import type { RecordType } from "../../types/record";
+import type { MoneyRecord, RecordType } from "../../types/record";
 import { formatNumberWithCommas, parseFormattedNumber } from "../../utils/money";
 
 type RecordFormProps = {
+  initialRecord?: MoneyRecord;
   onSuccess: () => void;
+  onDelete?: () => void;
 };
 
 type FormState = {
@@ -18,26 +20,56 @@ type FormState = {
 
 const initialType: RecordType = "expense";
 
-export function RecordForm({ onSuccess }: RecordFormProps) {
-  const addRecord = useRecordStore((state) => state.addRecord);
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
-  const [form, setForm] = useState<FormState>({
+function createInitialForm(today: string): FormState {
+  return {
     type: initialType,
     amount: "",
     categoryId: defaultExpenseCategories[0]?.id ?? "",
     memo: "",
     date: today,
-  });
+  };
+}
+
+function mapRecordToForm(record: MoneyRecord): FormState {
+  return {
+    type: record.type,
+    amount: formatNumberWithCommas(record.amount),
+    categoryId: record.categoryId,
+    memo: record.memo ?? "",
+    date: record.date.slice(0, 10),
+  };
+}
+
+export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormProps) {
+  const addRecord = useRecordStore((state) => state.addRecord);
+  const updateRecord = useRecordStore((state) => state.updateRecord);
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const [form, setForm] = useState<FormState>(() =>
+    initialRecord ? mapRecordToForm(initialRecord) : createInitialForm(today),
+  );
 
   const categories =
     form.type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
 
   useEffect(() => {
+    if (initialRecord) {
+      setForm(mapRecordToForm(initialRecord));
+      return;
+    }
+
+    setForm(createInitialForm(today));
+  }, [initialRecord, today]);
+
+  useEffect(() => {
+    if (categories.some((category) => category.id === form.categoryId)) {
+      return;
+    }
+
     setForm((current) => ({
       ...current,
       categoryId: categories[0]?.id ?? "",
     }));
-  }, [form.type]);
+  }, [categories, form.categoryId]);
 
   const numericAmount = parseFormattedNumber(form.amount);
   const isValid = numericAmount > 0 && Boolean(form.categoryId) && Boolean(form.date);
@@ -49,23 +81,23 @@ export function RecordForm({ onSuccess }: RecordFormProps) {
       return;
     }
 
-    addRecord({
+    const nextRecord = {
       type: form.type,
       amount: numericAmount,
       categoryId: form.categoryId,
       memo: form.memo.trim() || undefined,
       date: new Date(form.date).toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    };
+
+    if (initialRecord) {
+      updateRecord(initialRecord.id, nextRecord);
+    } else {
+      addRecord(nextRecord);
+      setForm(createInitialForm(today));
+    }
 
     onSuccess();
-    setForm({
-      type: initialType,
-      amount: "",
-      categoryId: defaultExpenseCategories[0]?.id ?? "",
-      memo: "",
-      date: today,
-    });
   };
 
   return (
@@ -171,8 +203,18 @@ export function RecordForm({ onSuccess }: RecordFormProps) {
         disabled={!isValid}
         className="w-full rounded-2xl bg-ink px-4 py-4 text-base font-semibold text-white transition disabled:cursor-not-allowed disabled:bg-stone-300"
       >
-        기록 저장하기
+        {initialRecord ? "기록 수정하기" : "기록 저장하기"}
       </button>
+
+      {initialRecord ? (
+        <button
+          type="button"
+          onClick={onDelete}
+          className="w-full rounded-2xl bg-white px-4 py-4 text-base font-semibold text-coral ring-1 ring-coral/20 transition hover:bg-coral/5"
+        >
+          기록 삭제하기
+        </button>
+      ) : null}
     </form>
   );
 }
