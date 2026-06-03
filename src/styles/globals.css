@@ -109,12 +109,13 @@
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100dvh;
   overflow: hidden;
   font-family: "Pretendard", "Noto Sans KR", system-ui, sans-serif;
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 button,
