@@ -190,7 +190,7 @@ type InsightCardProps = {
 
 function InsightCard({ label, value, caption }: InsightCardProps) {
   return (
-    <article className="rounded-[24px] bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(255,248,238,0.92))] p-4 shadow-card">
+    <article className="rounded-[24px] bg-white/80 p-4 shadow-card backdrop-blur">
       <p className="text-sm text-stone-500">{label}</p>
       <p className="mt-3 text-xl font-bold">{value}</p>
       <p className="mt-2 text-sm text-stone-500">{caption}</p>
