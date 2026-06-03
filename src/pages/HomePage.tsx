@@ -2,7 +2,7 @@ import { PiggyBank } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Modal } from "../components/common/Modal";
 import { RecordForm } from "../components/record/RecordForm";
-import { defaultExpenseCategories, defaultIncomeCategories } from "../constants/categories";
+import { getMergedCategories, useCategoryStore } from "../stores/categoryStore";
 import { useGoalStore } from "../stores/goalStore";
 import { useRecordStore } from "../stores/recordStore";
 import type { MoneyRecord } from "../types/record";
@@ -14,6 +14,8 @@ export function HomePage() {
   const records = useRecordStore((state) => state.records);
   const removeRecord = useRecordStore((state) => state.removeRecord);
   const monthlyGoalAmount = useGoalStore((state) => state.monthlyGoalAmount);
+  const customCategories = useCategoryStore((state) => state.customCategories);
+  const hiddenDefaultCategoryIds = useCategoryStore((state) => state.hiddenDefaultCategoryIds);
   const [selectedRecord, setSelectedRecord] = useState<MoneyRecord | null>(null);
 
   const currentMonth = new Date().getMonth();
@@ -43,12 +45,12 @@ export function HomePage() {
   const categoryNameById = useMemo(
     () =>
       Object.fromEntries(
-        [...defaultExpenseCategories, ...defaultIncomeCategories].map((category) => [
+        getMergedCategories({ customCategories, hiddenDefaultCategoryIds }).map((category) => [
           category.id,
           category.name,
         ]),
       ),
-    [],
+    [customCategories, hiddenDefaultCategoryIds],
   );
 
   return (

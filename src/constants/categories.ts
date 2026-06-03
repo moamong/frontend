@@ -15,9 +15,9 @@ export const defaultExpenseCategories: Category[] = [
 
 export const defaultIncomeCategories: Category[] = [
   { id: "income-salary", name: "월급", type: "income", icon: "wallet", color: "#ef8a62", isDefault: true },
-  { id: "income-side", name: "부업", type: "income", icon: "sparkles", color: "#8dc9b5", isDefault: true },
+  { id: "income-side", name: "부수입", type: "income", icon: "sparkles", color: "#8dc9b5", isDefault: true },
   { id: "income-allowance", name: "용돈", type: "income", icon: "gift", color: "#f0b27a", isDefault: true },
-  { id: "income-interest", name: "이자", type: "income", icon: "coin", color: "#7ea8be", isDefault: true },
+  { id: "income-interest", name: "투자/이자", type: "income", icon: "coin", color: "#7ea8be", isDefault: true },
   { id: "income-refund", name: "환급", type: "income", icon: "return", color: "#c497d8", isDefault: true },
   { id: "income-other", name: "기타", type: "income", icon: "dots", color: "#b0a79f", isDefault: true },
 ];

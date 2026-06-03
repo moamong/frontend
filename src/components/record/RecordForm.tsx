@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { defaultExpenseCategories, defaultIncomeCategories } from "../../constants/categories";
+import { getCategoriesByType, useCategoryStore } from "../../stores/categoryStore";
 import { useRecordStore } from "../../stores/recordStore";
 import type { MoneyRecord, RecordType } from "../../types/record";
 import { formatNumberWithCommas, parseFormattedNumber } from "../../utils/money";
@@ -20,11 +20,11 @@ type FormState = {
 
 const initialType: RecordType = "expense";
 
-function createInitialForm(today: string): FormState {
+function createInitialForm(today: string, defaultCategoryId: string): FormState {
   return {
     type: initialType,
     amount: "",
-    categoryId: defaultExpenseCategories[0]?.id ?? "",
+    categoryId: defaultCategoryId,
     memo: "",
     date: today,
   };
@@ -43,13 +43,23 @@ function mapRecordToForm(record: MoneyRecord): FormState {
 export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormProps) {
   const addRecord = useRecordStore((state) => state.addRecord);
   const updateRecord = useRecordStore((state) => state.updateRecord);
+  const customCategories = useCategoryStore((state) => state.customCategories);
+  const hiddenDefaultCategoryIds = useCategoryStore((state) => state.hiddenDefaultCategoryIds);
   const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const expenseCategories = useMemo(
+    () => getCategoriesByType({ customCategories, hiddenDefaultCategoryIds }, "expense"),
+    [customCategories, hiddenDefaultCategoryIds],
+  );
+  const incomeCategories = useMemo(
+    () => getCategoriesByType({ customCategories, hiddenDefaultCategoryIds }, "income"),
+    [customCategories, hiddenDefaultCategoryIds],
+  );
+  const defaultExpenseCategoryId = expenseCategories[0]?.id ?? "";
   const [form, setForm] = useState<FormState>(() =>
-    initialRecord ? mapRecordToForm(initialRecord) : createInitialForm(today),
+    initialRecord ? mapRecordToForm(initialRecord) : createInitialForm(today, defaultExpenseCategoryId),
   );
 
-  const categories =
-    form.type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
+  const categories = form.type === "expense" ? expenseCategories : incomeCategories;
 
   useEffect(() => {
     if (initialRecord) {
@@ -57,8 +67,8 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
       return;
     }
 
-    setForm(createInitialForm(today));
-  }, [initialRecord, today]);
+    setForm(createInitialForm(today, defaultExpenseCategoryId));
+  }, [defaultExpenseCategoryId, initialRecord, today]);
 
   useEffect(() => {
     if (categories.some((category) => category.id === form.categoryId)) {
@@ -94,7 +104,7 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
       updateRecord(initialRecord.id, nextRecord);
     } else {
       addRecord(nextRecord);
-      setForm(createInitialForm(today));
+      setForm(createInitialForm(today, defaultExpenseCategoryId));
     }
 
     onSuccess();
@@ -118,9 +128,7 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
             }
             className={[
               "rounded-2xl px-4 py-3 text-sm font-semibold transition",
-              form.type === option.value
-                ? "bg-ink text-white"
-                : "bg-white text-stone-600",
+              form.type === option.value ? "bg-ink text-white" : "bg-white text-stone-600",
             ].join(" ")}
           >
             {option.label}
@@ -145,28 +153,34 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
       </Field>
 
       <Field label="카테고리">
-        <div className="grid grid-cols-2 gap-3">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() =>
-                setForm((current) => ({
-                  ...current,
-                  categoryId: category.id,
-                }))
-              }
-              className={[
-                "rounded-2xl px-4 py-3 text-left text-sm font-medium transition",
-                form.categoryId === category.id
-                  ? "bg-coral text-white"
-                  : "bg-white text-stone-700 ring-1 ring-stone-200",
-              ].join(" ")}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
+        {categories.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() =>
+                  setForm((current) => ({
+                    ...current,
+                    categoryId: category.id,
+                  }))
+                }
+                className={[
+                  "rounded-2xl px-4 py-3 text-left text-sm font-medium transition",
+                  form.categoryId === category.id
+                    ? "bg-coral text-white"
+                    : "bg-white text-stone-700 ring-1 ring-stone-200",
+                ].join(" ")}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl bg-sand/70 px-4 py-4 text-sm text-stone-600">
+            사용할 수 있는 카테고리가 없어요. 설정에서 먼저 카테고리를 추가해보세요.
+          </div>
+        )}
       </Field>
 
       <Field label="메모">

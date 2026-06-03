@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { defaultExpenseCategories, defaultIncomeCategories } from "../constants/categories";
+import { getMergedCategories, useCategoryStore } from "../stores/categoryStore";
 import { useRecordStore } from "../stores/recordStore";
 import { formatCurrency } from "../utils/money";
 import {
@@ -34,17 +34,19 @@ const pieColors = ["#ef8a62", "#f0b27a", "#8dc9b5", "#f39c9c", "#7ea8be", "#c8a9
 
 export function StatisticsPage() {
   const records = useRecordStore((state) => state.records);
+  const customCategories = useCategoryStore((state) => state.customCategories);
+  const hiddenDefaultCategoryIds = useCategoryStore((state) => state.hiddenDefaultCategoryIds);
   const [period, setPeriod] = useState<StatisticsPeriod>("monthly");
 
   const categoryById = useMemo(
     () =>
       Object.fromEntries(
-        [...defaultExpenseCategories, ...defaultIncomeCategories].map((category) => [
+        getMergedCategories({ customCategories, hiddenDefaultCategoryIds }).map((category) => [
           category.id,
           category,
         ]),
       ),
-    [],
+    [customCategories, hiddenDefaultCategoryIds],
   );
 
   const summary = useMemo(() => getStatisticsSummary(records, period), [period, records]);
@@ -92,11 +94,9 @@ export function StatisticsPage() {
       </div>
 
       <article className="rounded-[28px] bg-white/85 p-5 shadow-card">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-sm text-stone-500">수입과 지출 추이</p>
-            <h2 className="mt-1 text-lg font-bold">기간별 흐름을 비교해보세요</h2>
-          </div>
+        <div>
+          <p className="text-sm text-stone-500">수입과 지출 추이</p>
+          <h2 className="mt-1 text-lg font-bold">기간별 흐름을 비교해보세요</h2>
         </div>
 
         <div className="mt-4 h-64 rounded-[24px] bg-[linear-gradient(180deg,_#fff7e8,_#f7dfcb)] p-3">
@@ -117,7 +117,6 @@ export function StatisticsPage() {
                     const amount = typeof value === "number" ? value : Number(value ?? 0);
                     return [formatCurrency(amount), name === "income" ? "수입" : "지출"];
                   }}
-                  labelFormatter={(label) => `${label}`}
                 />
                 <Legend
                   verticalAlign="top"
@@ -166,7 +165,6 @@ export function StatisticsPage() {
                       const amount = typeof value === "number" ? value : Number(value ?? 0);
                       return [formatCurrency(amount), "지출"];
                     }}
-                    labelFormatter={(label) => `${label}`}
                   />
                   <Pie
                     data={categoryChartData}

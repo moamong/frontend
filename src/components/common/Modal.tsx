@@ -7,6 +7,7 @@ type ModalProps = {
   title: string;
   description?: string;
   children: ReactNode;
+  align?: "bottom" | "center";
 };
 
 export function Modal({
@@ -15,6 +16,7 @@ export function Modal({
   title,
   description,
   children,
+  align = "bottom",
 }: ModalProps) {
   useEffect(() => {
     if (!isOpen) {
@@ -43,12 +45,20 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end justify-center bg-stone-950/35 px-4 pb-0 pt-10 backdrop-blur-sm"
+      className={[
+        "fixed inset-0 z-40 flex justify-center bg-stone-950/35 px-4 pt-10 backdrop-blur-sm",
+        align === "center" ? "items-center pb-10" : "items-end pb-0",
+      ].join(" ")}
       onClick={onClose}
       role="presentation"
     >
       <section
-        className="app-scroll max-h-[90vh] w-full max-w-[560px] overflow-y-auto rounded-t-[32px] bg-[#fffaf3] p-5 shadow-2xl lg:mb-10 lg:rounded-[32px] lg:border lg:border-white/70"
+        className={[
+          "app-scroll max-h-[90vh] w-full max-w-[560px] overflow-y-auto bg-[#fffaf3] p-5 shadow-2xl lg:border lg:border-white/70",
+          align === "center"
+            ? "rounded-[32px]"
+            : "rounded-t-[32px] lg:mb-10 lg:rounded-[32px]",
+        ].join(" ")}
         onClick={(event) => event.stopPropagation()}
         aria-modal="true"
         role="dialog"
