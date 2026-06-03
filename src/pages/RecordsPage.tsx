@@ -44,7 +44,6 @@ export function RecordsPage() {
     <>
       <section className="space-y-5">
         <header className="space-y-2">
-          <p className="text-sm font-medium text-stone-600">기간별로 보는 전체 기록</p>
           <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">기록</h1>
         </header>
 

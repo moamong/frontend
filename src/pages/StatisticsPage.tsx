@@ -63,7 +63,6 @@ export function StatisticsPage() {
   return (
     <section className="space-y-5">
       <header className="space-y-2">
-        <p className="text-sm font-medium text-stone-600">기록 흐름을 한눈에 보기</p>
         <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">통계</h1>
       </header>
 

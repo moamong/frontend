@@ -57,7 +57,6 @@ export function HomePage() {
     <>
       <section className="space-y-5">
         <header className="space-y-2 text-left">
-          <p className="text-sm font-medium text-stone-500">저축할수록 통통해지는 가계부</p>
           <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">모아몽</h1>
         </header>
 
@@ -65,7 +64,9 @@ export function HomePage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-sm text-stone-500">이번 달 캐릭터</p>
-              <h2 className="mt-1 text-2xl font-bold">{growth.title}</h2>
+              <h2 className="mt-1 font-['GeekbleMalrangiche'] text-2xl tracking-tight">
+                {growth.title}
+              </h2>
             </div>
             <div className="rounded-full bg-sand px-4 py-2 text-sm font-semibold text-coral">
               Lv.{growth.level}

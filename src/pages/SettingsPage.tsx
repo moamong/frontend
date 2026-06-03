@@ -60,7 +60,6 @@ export function SettingsPage() {
   return (
     <section className="space-y-5">
       <header className="space-y-2">
-        <p className="text-sm font-medium text-stone-600">기본값 관리</p>
         <h1 className="font-['GeekbleMalrangiche'] text-3xl tracking-tight">설정</h1>
       </header>
 
