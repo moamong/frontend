@@ -11,7 +11,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getMergedCategories, useCategoryStore } from "../stores/categoryStore";
+import {
+  getCategoryDisplayName,
+  getMergedCategories,
+  useCategoryStore,
+} from "../stores/categoryStore";
 import { useRecordStore } from "../stores/recordStore";
 import { formatCurrency } from "../utils/money";
 import {
@@ -37,15 +41,16 @@ export function StatisticsPage() {
   const hiddenDefaultCategoryIds = useCategoryStore((state) => state.hiddenDefaultCategoryIds);
   const [period, setPeriod] = useState<StatisticsPeriod>("monthly");
 
+  const categoryState = useMemo(
+    () => ({ customCategories, hiddenDefaultCategoryIds }),
+    [customCategories, hiddenDefaultCategoryIds],
+  );
   const categoryById = useMemo(
     () =>
       Object.fromEntries(
-        getMergedCategories({ customCategories, hiddenDefaultCategoryIds }).map((category) => [
-          category.id,
-          category,
-        ]),
+        getMergedCategories(categoryState).map((category) => [category.id, category]),
       ),
-    [customCategories, hiddenDefaultCategoryIds],
+    [categoryState],
   );
 
   const summary = useMemo(() => getStatisticsSummary(records, period), [period, records]);
@@ -53,7 +58,7 @@ export function StatisticsPage() {
   const categoryBreakdown = useMemo(() => getCategoryBreakdown(records, period), [period, records]);
 
   const categoryChartData = categoryBreakdown.map((item, index) => ({
-    name: categoryById[item.categoryId]?.name ?? "기타",
+    name: getCategoryDisplayName(categoryState, item.categoryId),
     amount: item.amount,
     ratio: item.ratio,
     color: categoryById[item.categoryId]?.color ?? pieColors[index % pieColors.length],
@@ -165,9 +170,9 @@ export function StatisticsPage() {
         </div>
 
         {categoryChartData.length > 0 ? (
-            <div className="mt-4 rounded-[24px] bg-[#fffaf3] p-4 ring-1 ring-stone-100">
-              <div className="relative mx-auto h-56 w-full max-w-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
+          <div className="mt-4 rounded-[24px] bg-[#fffaf3] p-4 ring-1 ring-stone-100">
+            <div className="relative mx-auto h-56 w-full max-w-[220px]">
+              <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip content={<CategoryTooltip />} />
                   <Pie

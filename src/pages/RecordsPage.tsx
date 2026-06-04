@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Modal } from "../components/common/Modal";
 import { RecordForm } from "../components/record/RecordForm";
-import { getMergedCategories, useCategoryStore } from "../stores/categoryStore";
+import { getCategoryDisplayName, useCategoryStore } from "../stores/categoryStore";
 import { useRecordStore } from "../stores/recordStore";
 import type { MoneyRecord } from "../types/record";
 import { formatShortDate } from "../utils/date";
@@ -27,19 +27,13 @@ export function RecordsPage() {
   const [selectedRecord, setSelectedRecord] = useState<MoneyRecord | null>(null);
   const [period, setPeriod] = useState<StatisticsPeriod>("monthly");
 
-  const categoryNameById = useMemo(
-    () =>
-      Object.fromEntries(
-        getMergedCategories({ customCategories, hiddenDefaultCategoryIds }).map((category) => [
-          category.id,
-          category.name,
-        ]),
-      ),
+  const categoryState = useMemo(
+    () => ({ customCategories, hiddenDefaultCategoryIds }),
     [customCategories, hiddenDefaultCategoryIds],
   );
-
   const filteredRecords = useMemo(() => getRecordsForPeriod(records, period), [period, records]);
   const summary = useMemo(() => getStatisticsSummary(records, period), [period, records]);
+
   return (
     <>
       <section className="space-y-5">
@@ -75,7 +69,7 @@ export function RecordsPage() {
                 <RecordListItem
                   key={record.id}
                   record={record}
-                  categoryName={categoryNameById[record.categoryId] ?? "기타"}
+                  categoryName={getCategoryDisplayName(categoryState, record.categoryId)}
                   onClick={() => setSelectedRecord(record)}
                 />
               ))
@@ -137,7 +131,11 @@ function TotalCard({ label, value, accent }: TotalCardProps) {
   return (
     <article className="rounded-[24px] bg-[#fffaf3] p-4">
       <p className="text-sm font-medium text-stone-600">{label}</p>
-      <p className={["mt-3 whitespace-nowrap text-sm font-bold leading-none sm:text-base", accent].join(" ")}>
+      <p
+        className={["mt-3 whitespace-nowrap text-sm font-bold leading-none sm:text-base", accent].join(
+          " ",
+        )}
+      >
         {value}
       </p>
     </article>

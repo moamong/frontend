@@ -98,6 +98,26 @@ export function getCategoriesByType(
   );
 }
 
+export function getCategoryById(
+  state: Pick<CategoryStore, "customCategories" | "hiddenDefaultCategoryIds">,
+  categoryId: string,
+) {
+  return getMergedCategories(state).find((category) => category.id === categoryId);
+}
+
+export function getCategoryDisplayName(
+  state: Pick<CategoryStore, "customCategories" | "hiddenDefaultCategoryIds">,
+  categoryId: string,
+) {
+  const category = getCategoryById(state, categoryId);
+
+  if (!category) {
+    return "삭제된 카테고리";
+  }
+
+  return category.isHidden ? `${category.name} (숨김됨)` : category.name;
+}
+
 function getDefaultIcon(type: RecordType) {
   return type === "expense" ? "wallet" : "sparkles";
 }

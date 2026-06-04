@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { getCategoriesByType, useCategoryStore } from "../../stores/categoryStore";
+import {
+  getCategoryById,
+  getCategoriesByType,
+  useCategoryStore,
+} from "../../stores/categoryStore";
 import { useRecordStore } from "../../stores/recordStore";
+import type { Category } from "../../types/category";
 import type { MoneyRecord, RecordType } from "../../types/record";
 import { formatNumberWithCommas, parseFormattedNumber } from "../../utils/money";
 
@@ -58,8 +63,47 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
   const [form, setForm] = useState<FormState>(() =>
     initialRecord ? mapRecordToForm(initialRecord) : createInitialForm(today, defaultExpenseCategoryId),
   );
+  const selectedCategory = useMemo(
+    () =>
+      form.categoryId
+        ? getCategoryById({ customCategories, hiddenDefaultCategoryIds }, form.categoryId)
+        : undefined,
+    [customCategories, form.categoryId, hiddenDefaultCategoryIds],
+  );
 
-  const categories = form.type === "expense" ? expenseCategories : incomeCategories;
+  const categories = useMemo(() => {
+    const baseCategories = form.type === "expense" ? expenseCategories : incomeCategories;
+
+    if (!form.categoryId || baseCategories.some((category) => category.id === form.categoryId)) {
+      return baseCategories;
+    }
+
+    if (selectedCategory && selectedCategory.type === form.type) {
+      return [selectedCategory, ...baseCategories];
+    }
+
+    if (initialRecord && initialRecord.categoryId === form.categoryId) {
+      const fallbackCategory: Category = {
+        id: form.categoryId,
+        name: "삭제된 카테고리",
+        type: form.type,
+        color: "#b0a79f",
+        icon: "dots",
+        isDefault: false,
+      };
+
+      return [fallbackCategory, ...baseCategories];
+    }
+
+    return baseCategories;
+  }, [
+    expenseCategories,
+    form.categoryId,
+    form.type,
+    incomeCategories,
+    initialRecord,
+    selectedCategory,
+  ]);
 
   useEffect(() => {
     if (initialRecord) {
@@ -172,7 +216,7 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
                     : "bg-white text-stone-700 ring-1 ring-stone-200",
                 ].join(" ")}
               >
-                {category.name}
+                {category.isHidden ? `${category.name} (숨김됨)` : category.name}
               </button>
             ))}
           </div>
