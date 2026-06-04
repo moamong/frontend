@@ -2,7 +2,7 @@ import { PiggyBank } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Modal } from "../components/common/Modal";
 import { RecordForm } from "../components/record/RecordForm";
-import { getMergedCategories, useCategoryStore } from "../stores/categoryStore";
+import { getCategoryDisplayName, useCategoryStore } from "../stores/categoryStore";
 import { useGoalStore } from "../stores/goalStore";
 import { useRecordStore } from "../stores/recordStore";
 import type { MoneyRecord } from "../types/record";
@@ -42,14 +42,8 @@ export function HomePage() {
   const recentRecords = records.slice(0, 4);
   const growth = getCharacterGrowth(monthlySaving, monthlyGoalAmount);
 
-  const categoryNameById = useMemo(
-    () =>
-      Object.fromEntries(
-        getMergedCategories({ customCategories, hiddenDefaultCategoryIds }).map((category) => [
-          category.id,
-          category.name,
-        ]),
-      ),
+  const categoryState = useMemo(
+    () => ({ customCategories, hiddenDefaultCategoryIds }),
     [customCategories, hiddenDefaultCategoryIds],
   );
 
@@ -134,7 +128,7 @@ export function HomePage() {
                 <RecentRecordItem
                   key={record.id}
                   record={record}
-                  categoryName={categoryNameById[record.categoryId] ?? "기타"}
+                  categoryName={getCategoryDisplayName(categoryState, record.categoryId)}
                   onClick={() => setSelectedRecord(record)}
                 />
               ))

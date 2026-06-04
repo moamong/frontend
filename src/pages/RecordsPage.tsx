@@ -88,7 +88,7 @@ export function RecordsPage() {
             <p className="mt-1 text-lg font-bold">선택한 기간의 수입과 지출을 한 번에 볼 수 있어요</p>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-3">
+          <div className="mt-4 space-y-3">
             <TotalCard label="수입" value={formatCurrency(summary.income)} accent="text-mint" />
             <TotalCard label="지출" value={formatCurrency(summary.expense)} accent="text-coral" />
             <TotalCard
