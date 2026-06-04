@@ -154,3 +154,53 @@ a {
   scrollbar-color: rgba(143, 116, 91, 0.35) transparent;
   overscroll-behavior: contain;
 }
+
+.picker-shell {
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 249, 241, 0.88));
+  padding: 1rem;
+  box-shadow: inset 0 0 0 1px rgba(231, 220, 209, 0.9);
+}
+
+.hue-range {
+  width: 100%;
+  height: 0.875rem;
+  border-radius: 999px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.hue-range::-webkit-slider-runnable-track {
+  height: 0.875rem;
+  border-radius: 999px;
+}
+
+.hue-range::-webkit-slider-thumb {
+  margin-top: -4px;
+  height: 1.35rem;
+  width: 1.35rem;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: #2e2722;
+  box-shadow: 0 4px 14px rgba(46, 39, 34, 0.2);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.hue-range::-moz-range-track {
+  height: 0.875rem;
+  border: 0;
+  border-radius: 999px;
+}
+
+.hue-range::-moz-range-thumb {
+  height: 1.35rem;
+  width: 1.35rem;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: #2e2722;
+  box-shadow: 0 4px 14px rgba(46, 39, 34, 0.2);
+  cursor: pointer;
+}

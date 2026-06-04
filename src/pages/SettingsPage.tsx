@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { ColorPalettePicker } from "../components/common/ColorPalettePicker";
 import { Modal } from "../components/common/Modal";
 import { getCategoriesByType, useCategoryStore } from "../stores/categoryStore";
 import { useGoalStore } from "../stores/goalStore";
@@ -360,20 +361,15 @@ function CategorySection({
             placeholder={type === "expense" ? "예: 반려동물" : "예: 중고거래"}
             className="w-full rounded-2xl border-0 bg-white px-4 py-3 text-base outline-none ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-2 focus:ring-coral"
           />
-          <label className="flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 ring-1 ring-stone-200">
-            <span className="text-sm font-medium text-stone-600">색상</span>
-            <input
-              type="color"
-              value={form.color}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  color: event.target.value,
-                }))
-              }
-              className="h-9 w-9 cursor-pointer rounded-md border-0 bg-transparent p-0"
-            />
-          </label>
+          <ColorPalettePicker
+            value={form.color}
+            onChange={(value) =>
+              setForm((current) => ({
+                ...current,
+                color: value,
+              }))
+            }
+          />
           <button
             type="submit"
             className="w-full rounded-2xl bg-ink px-4 py-3 text-sm font-semibold text-white transition hover:opacity-95"

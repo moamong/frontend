@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { DatePickerField } from "../common/DatePickerField";
 import {
   getCategoryById,
   getCategoriesByType,
@@ -51,6 +52,7 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
   const customCategories = useCategoryStore((state) => state.customCategories);
   const hiddenDefaultCategoryIds = useCategoryStore((state) => state.hiddenDefaultCategoryIds);
   const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+
   const expenseCategories = useMemo(
     () => getCategoriesByType({ customCategories, hiddenDefaultCategoryIds }, "expense"),
     [customCategories, hiddenDefaultCategoryIds],
@@ -59,10 +61,12 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
     () => getCategoriesByType({ customCategories, hiddenDefaultCategoryIds }, "income"),
     [customCategories, hiddenDefaultCategoryIds],
   );
+
   const defaultExpenseCategoryId = expenseCategories[0]?.id ?? "";
   const [form, setForm] = useState<FormState>(() =>
     initialRecord ? mapRecordToForm(initialRecord) : createInitialForm(today, defaultExpenseCategoryId),
   );
+
   const selectedCategory = useMemo(
     () =>
       form.categoryId
@@ -237,22 +241,20 @@ export function RecordForm({ initialRecord, onSuccess, onDelete }: RecordFormPro
             }))
           }
           rows={3}
-          placeholder="선택 사항이에요"
+          placeholder="선택 사항이에요."
           className="w-full resize-none rounded-2xl border-0 bg-white px-4 py-4 text-base outline-none ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-2 focus:ring-coral"
         />
       </Field>
 
       <Field label="날짜">
-        <input
-          type="date"
+        <DatePickerField
           value={form.date}
-          onChange={(event) =>
+          onChange={(value) =>
             setForm((current) => ({
               ...current,
-              date: event.target.value,
+              date: value,
             }))
           }
-          className="w-full rounded-2xl border-0 bg-white px-4 py-4 text-base outline-none ring-1 ring-stone-200 focus:ring-2 focus:ring-coral"
         />
       </Field>
 
