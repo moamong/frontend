@@ -28,6 +28,7 @@ export function SettingsPage() {
     (state) => state.toggleDefaultCategoryVisibility,
   );
   const [goalInput, setGoalInput] = useState(() => formatNumberWithCommas(monthlyGoalAmount));
+  const [isGoalEditorOpen, setIsGoalEditorOpen] = useState(false);
 
   const expenseCategories = useMemo(
     () =>
@@ -55,6 +56,7 @@ export function SettingsPage() {
   const handleGoalSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setMonthlyGoalAmount(parseFormattedNumber(goalInput));
+    setIsGoalEditorOpen(false);
   };
 
   return (
@@ -64,24 +66,50 @@ export function SettingsPage() {
       </header>
 
       <article className="rounded-[28px] bg-white/85 p-5 shadow-card">
-        <p className="text-sm text-stone-500">이번 달 저축 목표</p>
-        <p className="mt-3 text-2xl font-bold">{formatCurrency(monthlyGoalAmount)}</p>
-        <form className="mt-4 space-y-3" onSubmit={handleGoalSubmit}>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={goalInput}
-            onChange={(event) => setGoalInput(formatNumberWithCommas(event.target.value))}
-            placeholder="예: 300,000"
-            className="w-full rounded-2xl border-0 bg-[#fffaf3] px-4 py-4 text-base outline-none ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-2 focus:ring-coral"
-          />
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm text-stone-500">이번 달 저축 목표</p>
+            <p className="mt-3 text-2xl font-bold">{formatCurrency(monthlyGoalAmount)}</p>
+          </div>
           <button
-            type="submit"
-            className="w-full rounded-2xl bg-ink px-4 py-4 text-base font-semibold text-white transition hover:opacity-95"
+            type="button"
+            onClick={() => setIsGoalEditorOpen((current) => !current)}
+            className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:opacity-95"
           >
-            목표 저장하기
+            {monthlyGoalAmount > 0 ? "수정하기" : "추가하기"}
           </button>
-        </form>
+        </div>
+
+        {isGoalEditorOpen ? (
+          <form className="mt-4 space-y-3" onSubmit={handleGoalSubmit}>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={goalInput}
+              onChange={(event) => setGoalInput(formatNumberWithCommas(event.target.value))}
+              placeholder="예: 300,000"
+              className="w-full rounded-2xl border-0 bg-[#fffaf3] px-4 py-4 text-base outline-none ring-1 ring-stone-200 placeholder:text-stone-400 focus:ring-2 focus:ring-coral"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setGoalInput(formatNumberWithCommas(monthlyGoalAmount));
+                  setIsGoalEditorOpen(false);
+                }}
+                className="w-full rounded-2xl bg-white px-4 py-4 text-base font-semibold text-stone-600 ring-1 ring-stone-200 transition hover:bg-stone-50"
+              >
+                닫기
+              </button>
+              <button
+                type="submit"
+                className="w-full rounded-2xl bg-ink px-4 py-4 text-base font-semibold text-white transition hover:opacity-95"
+              >
+                목표 저장하기
+              </button>
+            </div>
+          </form>
+        ) : null}
       </article>
 
       <CategorySection
@@ -301,8 +329,8 @@ function CategorySection({
         title={editingCategory ? "카테고리 수정" : "카테고리 추가"}
         description={
           editingCategory
-            ? "이름과 색상을 바꿔서 카테고리를 다시 정리할 수 있어요."
-            : "새로운 카테고리를 추가해서 더 세밀하게 기록해보세요."
+            ? "이름과 색상을 바꿔 카테고리를 다시 정리할 수 있어요."
+            : "새 카테고리를 추가해서 더 편하게 기록해보세요."
         }
         align="center"
       >
